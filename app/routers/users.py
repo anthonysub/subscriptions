@@ -5,7 +5,7 @@ from app.database.sqlalchemy import SessionLocal
 from app.models.user import User
 from app.schemas.user import UserSchema
 
-# 👇 1. IMPORTAR EL BROKER (El megáfono)
+# 1. IMPORTAR EL BROKER (El megáfono)
 from app.pubsub import broker
 
 router = APIRouter()
@@ -19,7 +19,7 @@ def get_db():
         db.close()
 
 
-# GET ALL USERS (Se queda igual, leer datos no genera alertas)
+# GET ALL USERS 
 @router.get("/users", response_model=list[UserSchema])
 def get_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
@@ -27,7 +27,6 @@ def get_users(db: Session = Depends(get_db)):
 
 
 # CREATE USER 
-# 👇 2. Cambiamos a 'async def' para poder usar await
 @router.post("/users", response_model=UserSchema)
 async def create_user(user: UserSchema, db: Session = Depends(get_db)):
     new_user = User(
@@ -43,7 +42,7 @@ async def create_user(user: UserSchema, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    # 👇 3. ¡EL GRITO POR EL MEGÁFONO!
+    # 3. ¡EL GRITO POR EL MEGÁFONO!
     datos = f"REST POST: Se creó el usuario {new_user.name}"
     await broker.publish("CREACION", datos)
 
@@ -62,7 +61,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 
 # DELETE USER
-# 👇 4. También lo pasamos a 'async def'
+# 4. También lo pasamos a 'async def'
 @router.delete("/users/{user_id}")
 async def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
