@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Cambia users_db por el nombre de tu base si es diferente
-DATABASE_URL = "mysql+pymysql://root:@localhost/users_db"
+DATABASE_URL = "postgresql+psycopg2://postgres:12345678@localhost:5432/Usuarios"
 
 # Crea el motor de conexión
 engine = create_engine(
@@ -20,3 +20,10 @@ SessionLocal = sessionmaker(
 
 # Base para los modelos ORM
 Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

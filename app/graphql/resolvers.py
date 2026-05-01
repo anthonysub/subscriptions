@@ -1,16 +1,7 @@
-from app.database.sqlalchemy import SessionLocal
 from app.models.user import User
 from app.schemas.user import UserSchema
 from app.graphql.user_types import UserType
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+from app.database.sqlalchemy import get_db
 
 def resolve_users():
     db = next(get_db())
